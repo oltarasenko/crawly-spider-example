@@ -16,34 +16,35 @@ defmodule Esl do
   @impl Crawly.Spider
   def parse_item(response) do
     # Getting new urls to follow
+    {:ok, document} = Floki.parse_document(response.body)
+
     urls =
-      response.body
+      document
       |> Floki.find("a.more")
       |> Floki.attribute("href")
 
     # Convert URLs into requests
     requests =
-      Enum.map(urls, fn url ->
-        url
-        |> build_absolute_url(response.request_url)
-        |> Crawly.Utils.request_from_url()
-      end)
+      urls
+      |> Enum.map(fn url -> url |> build_absolute_url(response.request_url) |> Crawly.Utils.request_from_url() end)
 
     # Extract item from a page, e.g.
     # https://www.erlang-solutions.com/blog/introducing-telemetry.html
     title =
-      response.body
+      document
       |> Floki.find("article.blog_post h1:first-child")
       |> Floki.text()
 
     author =
-      response.body
+      document
       |> Floki.find("article.blog_post p.subheading")
       |> Floki.text(deep: false, sep: "")
       |> String.trim_leading()
       |> String.trim_trailing()
 
-    text = Floki.find(response.body, "article.blog_post") |> Floki.text()
+    text =
+      document
+      |> Floki.find("article.blog_post") |> Floki.text()
 
     %Crawly.ParsedItem{
       :requests => requests,
@@ -53,7 +54,5 @@ defmodule Esl do
     }
   end
 
-  def build_absolute_url(url, request_url) do
-    URI.merge(request_url, url) |> to_string()
-  end
+  defp build_absolute_url(url, request_url), do: URI.merge(request_url, url) |> to_string()
 end

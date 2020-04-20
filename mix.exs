@@ -5,7 +5,7 @@ defmodule EslBlog.MixProject do
     [
       app: :esl_blog,
       version: "0.1.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -14,7 +14,7 @@ defmodule EslBlog.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :crawly],
+      extra_applications: [:logger],
       mod: {EslBlog.Application, []}
     ]
   end
@@ -22,7 +22,8 @@ defmodule EslBlog.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:crawly, "~> 0.1"}
+      {:crawly, "~> 0.9.0"},
+      {:floki, "~> 0.26.0"}
     ]
   end
 end
