@@ -1,9 +1,9 @@
-defmodule EslBlog.MixProject do
+defmodule CrawlyExamples.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :esl_blog,
+      app: :crawly_examples,
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
@@ -15,7 +15,7 @@ defmodule EslBlog.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {EslBlog.Application, []}
+      mod: {CrawlyExamples.Application, []}
     ]
   end
 

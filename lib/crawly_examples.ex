@@ -1,6 +1,6 @@
-defmodule EslBlog do
+defmodule CrawlyExamples do
   @moduledoc """
-  Documentation for EslBlog.
+  Documentation for CrawlyExamples.
   """
 
   @doc """
@@ -8,7 +8,7 @@ defmodule EslBlog do
 
   ## Examples
 
-      iex> EslBlog.hello()
+      iex> CrawlyExamples.hello()
       :world
 
   """
