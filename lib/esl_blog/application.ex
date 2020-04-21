@@ -6,10 +6,9 @@ defmodule EslBlog.Application do
   use Application
 
   def start(_type, _args) do
-    # List all child processes to be supervised
     children = [
       # Starts a worker by calling: EslBlog.Worker.start_link(arg)
-      # {EslBlog.Worker, arg},
+      # {EslBlog.Worker, arg}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
