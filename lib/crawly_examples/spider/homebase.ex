@@ -1,7 +1,7 @@
 defmodule CrawlyExamples.Spider.Homebase do
   @behaviour Crawly.Spider
 
-  alias CrawlyExamples.ImageUtils
+  alias CrawlyExamples.Image
 
   require Logger
 
@@ -66,19 +66,9 @@ defmodule CrawlyExamples.Spider.Homebase do
         |> Floki.text()
     }
 
-    Enum.each(images, fn url -> ImageUtils.save_image("Homebase", category, url) end)
+    Enum.each(images, fn url -> Image.save_image("Homebase", category, url) end)
 
     %Crawly.ParsedItem{:items => [item], :requests => requests}
-  end
-
-  @impl Crawly.Spider
-  def override_settings() do
-    [
-      pipelines: [
-        Crawly.Pipelines.JSONEncoder,
-        {Crawly.Pipelines.WriteToFile, folder: "/tmp", extension: "json"},
-      ]
-    ]
   end
 
   defp build_absolute_url(url), do: URI.merge(base_url(), url) |> to_string()

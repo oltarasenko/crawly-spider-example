@@ -1,4 +1,4 @@
-defmodule CrawlyExamples.ImageUtils do
+defmodule CrawlyExamples.Image do
   @moduledoc false
 
   require Logger
