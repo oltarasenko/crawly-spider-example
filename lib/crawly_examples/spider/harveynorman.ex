@@ -51,7 +51,7 @@ defmodule CrawlyExamples.Spider.Harveynorman do
       |> Floki.attribute("src")
       |> Enum.map(&build_image_url/1)
 
-    Enum.each(images, fn url -> save_image(category, url) end)
+    Enum.each(images, fn url -> ImageUtils.save_image(category, url) end)
 
     %Crawly.ParsedItem{
       :items => [
@@ -81,6 +81,4 @@ defmodule CrawlyExamples.Spider.Harveynorman do
   defp build_absolute_url(url), do: URI.merge(base_url(), url) |> to_string()
 
   defp build_image_url(url), do: URI.merge("https://hniesfp.imgix.net", url) |> to_string()
-
-  defp save_image(category, url), do: ImageUtils.save_image(category, url)
 end

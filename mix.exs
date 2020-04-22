@@ -23,7 +23,9 @@ defmodule CrawlyExamples.MixProject do
   defp deps do
     [
       {:crawly, "~> 0.9.0"},
-      {:floki, "~> 0.26.0"}
+      {:floki, "~> 0.26.0"},
+      {:exmagic, git: "https://github.com/andrew-d/exmagic.git", tag: "v0.0.2"},
+      {:clipboard, ">= 0.0.0", only: [:dev]},
     ]
   end
 end

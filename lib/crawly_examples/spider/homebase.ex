@@ -1,5 +1,7 @@
-defmodule Homebase do
+defmodule CrawlyExamples.Spider.Homebase do
   @behaviour Crawly.Spider
+
+  alias CrawlyExamples.ImageUtils
 
   require Logger
 
@@ -11,23 +13,25 @@ defmodule Homebase do
     [
       start_urls: [
         "https://www.homebase.co.uk/our-range/tools",
-        "https://www.homebase.co.uk/our-range/lighting-and-electrical/torches-and-nightlights/worklights"
+        "https://www.homebase.co.uk/our-range/lighting-and-electrical/lighting/torches-and-nightlights/worklights",
       ]
     ]
   end
 
   @impl Crawly.Spider
   def parse_item(response) do
+    {:ok, document} = Floki.parse_document(response.body)
+
     # Extract product categories URLs
     product_categories =
-      response.body
+      document
       |> Floki.find("div.product-list-footer a")
       |> Floki.attribute("href")
 
     # Extract individual product page URLs
     product_pages =
-      response.body
-      |> Floki.find("a.product-tile  ")
+      document
+      |> Floki.find("a.product-tile")
       |> Floki.attribute("href")
 
     urls = product_pages ++ product_categories
@@ -40,39 +44,42 @@ defmodule Homebase do
       |> Enum.map(&Crawly.Utils.request_from_url/1)
 
     category =
-      response.body
+      document
       |> Floki.find(".breadcrumb span")
-      |> nth(2)
+      |> Enum.at(1)
       |> Floki.text()
 
-    images = response.body |> Floki.find("img.rsTmb") |> Floki.attribute("src")
+    images = document |> Floki.find("img.rsTmb") |> Floki.attribute("src")
 
     # Create item (for pages where items exists)
     item = %{
-      title: response.body |> Floki.find(".page-title h1") |> Floki.text(),
+      title: document |> Floki.find(".page-title h1") |> Floki.text(),
       id:
-        response.body
+        document
         |> Floki.find(".product-header-heading span")
         |> Floki.text(),
       images: images,
       category: category,
       description:
-        response.body
+        document
         |> Floki.find(".product-details__description")
         |> Floki.text()
     }
 
-    Enum.each(images, fn url -> save_image(category, url) end)
+    Enum.each(images, fn url -> ImageUtils.save_image("Homebase", category, url) end)
 
     %Crawly.ParsedItem{:items => [item], :requests => requests}
   end
 
-  defp nth(list, num) do
-    :lists.nth(num, list)
+  @impl Crawly.Spider
+  def override_settings() do
+    [
+      pipelines: [
+        Crawly.Pipelines.JSONEncoder,
+        {Crawly.Pipelines.WriteToFile, folder: "/tmp", extension: "json"},
+      ]
+    ]
   end
 
   defp build_absolute_url(url), do: URI.merge(base_url(), url) |> to_string()
-
-  defp save_image(category, url),
-       do: ProductsAdvisor.Spider.save_image(category, url)
 end
