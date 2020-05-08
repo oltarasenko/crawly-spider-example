@@ -1,4 +1,4 @@
-defmodule Esl do
+defmodule CrawlyExamples.Spider.Esl do
   @behaviour Crawly.Spider
 
   @impl Crawly.Spider
@@ -52,6 +52,16 @@ defmodule Esl do
         %{title: title, author: author, text: text, url: response.request_url}
       ]
     }
+  end
+
+  @impl Crawly.Spider
+  def override_settings() do
+    [
+      pipelines: [
+        {Crawly.Pipelines.CSVEncoder, fields: ~w(title author text url)a},
+        {Crawly.Pipelines.WriteToFile, folder: "/tmp", extension: "csv"},
+      ]
+    ]
   end
 
   defp build_absolute_url(url, request_url), do: URI.merge(request_url, url) |> to_string()
